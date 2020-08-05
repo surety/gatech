@@ -1,13 +1,18 @@
+import json
+
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 driver = None
+wait = None
 
 def setup_module():
     global driver
+    global wait
     driver = webdriver.Safari()
+    wait = WebDriverWait(driver, 10)
     print('Tool ready!')
 
 def teardown_module():
@@ -15,9 +20,9 @@ def teardown_module():
     print('Tool terminated!')
 
 #needs to be organized properly
+#change term from string to term id
 def search_classes(subject, term = 'Fall 2020', time = None, days = None, instructor = None):
     driver.get('https://oscar.gatech.edu/pls/bprod/bwckschd.p_disp_dyn_sched')
-    wait = WebDriverWait(driver, 10)
     search_by_term = driver.find_element_by_name('p_term')
     submit = driver.find_element_by_xpath("//input[@type='submit']")
     Select(search_by_term).select_by_visible_text(term)
@@ -39,7 +44,14 @@ def search_classes(subject, term = 'Fall 2020', time = None, days = None, instru
     for i in range(num_classes):
         template = []
         for j in range(7*i, 7*i + 7):
-            template.append(raw_data[i])
+            template.append(raw_data[j])
         data.append(template)
 
     return data
+
+def is_available(crn, term = 202008):
+    driver.get('https://oscar.gatech.edu/pls/bprod/bwckschd.p_disp_detail_sched?term_in=%s&crn_in=%s' % (term, crn))
+    sr_xpath = "//table[@summary='This layout table is used to present the seating numbers.']//tr[2]/td[3]"
+    seats_remaining = wait.until(EC.presence_of_element_located((By.XPATH, sr_xpath)))
+
+    return not int(seats_remaining.text) == 0
