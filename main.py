@@ -7,10 +7,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 driver = None
 wait = None
+settings = None
 
 def setup_module():
     global driver
     global wait
+    global settings
     driver = webdriver.Safari()
     wait = WebDriverWait(driver, 10)
     print('Tool ready!')
@@ -49,9 +51,38 @@ def search_classes(subject, term = 'Fall 2020', time = None, days = None, instru
 
     return data
 
+#def get_prefrences(): pass
+
+def get_desired_classes():
+    classes = []
+    data = json.load(open('settings.json'))
+    for crn in data['desiredClasses']:
+        classes.append(crn)
+
+    return classes
+
 def is_available(crn, term = 202008):
     driver.get('https://oscar.gatech.edu/pls/bprod/bwckschd.p_disp_detail_sched?term_in=%s&crn_in=%s' % (term, crn))
     sr_xpath = "//table[@summary='This layout table is used to present the seating numbers.']//tr[2]/td[3]"
     seats_remaining = wait.until(EC.presence_of_element_located((By.XPATH, sr_xpath)))
 
     return not int(seats_remaining.text) == 0
+
+#def remove_prefrence(crn): pass
+def remove_desired_class(crn): pass
+#def add_prefrence(crn): pass
+#def add_desired_class(crn): pass
+
+def register(crn): pass
+
+#def unregister(): pass
+
+#make a seprate file for the following functions
+def idle_registration():
+    while not get_desired_classes() == None:
+       for crn in get_desired_classes():
+            if is_available(crn):
+                register(c) #will catch errors and confirm registration
+                remove_desired_class(c)
+
+    pass

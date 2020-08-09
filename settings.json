@@ -1,0 +1,24 @@
+{
+  "term":"202008",
+  "credentials":{
+    "username":"null",
+    "password":"null"
+  },
+  "prefrences":[
+      {
+        "type":"null",
+        "time":"null",
+        "days":"null",
+        "where":"null",
+        "dateRange":"null",
+        "scheduleType":"null",
+        "instructors":["null"]
+    }
+  ],
+  "desiredClasses":
+  [
+      "0",
+      "0",
+      "0"
+  ]
+}
