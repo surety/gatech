@@ -1,5 +1,4 @@
 # 8/8/20 - By: surety
-# Written for Jessica Bates
 # Purpose: Test registration function
 
 from selenium import webdriver
