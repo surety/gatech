@@ -69,13 +69,54 @@ def is_available(crn, term = 202008):
     return not int(seats_remaining.text) == 0
 
 #def remove_prefrence(crn): pass
-def remove_desired_class(crn): pass
+#def remove_desired_class(crn): pass
 #def add_prefrence(crn): pass
 #def add_desired_class(crn): pass
 
-def register(crn): pass
+def login(username, password):
+    url = 'https://login.gatech.edu/cas/login'
+    driver.get(url)
+    user_element = wait.until(EC.presence_of_element_located( (By.ID, "username") ))
+    pass_element = wait.until(EC.presence_of_element_located( (By.ID, "password") ))
+    login_element = wait.until(EC.presence_of_element_located( (By.XPATH, "//input[@type='submit']") ))
 
-#def unregister(): pass
+    user_element.send_keys(username)
+    pass_element.send_keys(password)
+    login_element.click()
+    time.sleep(1)
+    wait.until(EC.url_changes(url))
+
+def go_to_add_or_drop():
+    driver.get('https://oscar.gatech.edu')
+    sal = wait.until(EC.presence_of_element_located( (By.XPATH, "//a[@class='btn btn-link btn-block']") ))
+    sal.click()
+    services = wait.until(EC.presence_of_element_located( (By.XPATH, "//img[@title='Student Services and Financial Aid']") ))
+    services.click()
+    registration = wait.until(EC.presence_of_element_located( (By.LINK_TEXT, "Registration") ))
+    registration.click()
+    add_or_drop_link = wait.until(EC.presence_of_element_located( (By.LINK_TEXT, "Add or Drop Classes") ))
+    add_or_drop_link.click()
+    submit_term = wait.until(EC.presence_of_element_located( (By.XPATH, "//input[@value='Submit']") ))
+    submit_term.click()
+
+def register(crn_old, crn_new):
+    go_to_add_or_drop()
+    new_crn_element = wait.until(EC.presence_of_element_located( (By.ID, "crn_id1") ))
+    submit_changes = wait.until(EC.presence_of_element_located( (By.XPATH, "//input[@value='Submit Changes']") ))
+    new_crn_element.send_keys(new_crn)
+    submit_changes.submit()
+
+def unregister(crn_old, crn_new):
+    go_to_add_or_drop()
+    table_data = wait.until(EC.presence_of_elements_located( (By.XPATH, "//table[@summary='Current Schedule']//td") ))
+
+    for i in range(0, len(table_data)):
+        if (i % 10) == 0 and table_data[i - 7] == crn_old:
+            action = wait.until(EC.presence_of_elements_located( (By.XPATH, "//select[@id='action_id%d']" % int(i / 10)) ))
+
+    Select( action ).select_by_visible_text('**Delete (Web)')
+    submit_changes = wait.until(EC.presence_of_element_located( (By.XPATH, "//input[@value='Submit Changes']") ))
+    submit_changes.submit()
 
 #make a seprate file for the following functions
 def idle_registration():
